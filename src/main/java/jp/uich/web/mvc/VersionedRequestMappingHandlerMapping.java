@@ -34,26 +34,12 @@ public class VersionedRequestMappingHandlerMapping extends RequestMappingHandler
   }
 
   @Override
-  protected RequestCondition<?> getCustomTypeCondition(Class<?> handlerType) {
-    if (handlerType.isAnnotationPresent(ApiVersion.class)) {
-      return this.createApiVersionCondition(AnnotationUtils.findAnnotation(handlerType, ApiVersion.class));
-    }
-
-    return null;
-  }
-
-  @Override
   protected RequestMappingInfo getMappingForMethod(Method method, Class<?> handlerType) {
     RequestMappingInfo info = super.getMappingForMethod(method, handlerType);
 
     if (AnnotationUtils.findAnnotation(method, ApiVersion.class) != null) {
       RequestCondition<?> methodCondition = this.getCustomMethodCondition(method);
-      return this.createApiVersionInfo(methodCondition).combine(info);
-    }
-
-    if (AnnotationUtils.findAnnotation(handlerType, ApiVersion.class) != null) {
-      RequestCondition<?> typeCondition = this.getCustomTypeCondition(handlerType);
-      return this.createApiVersionInfo(typeCondition).combine(info);
+      info = this.createApiVersionInfo(methodCondition).combine(info);
     }
 
     return info;

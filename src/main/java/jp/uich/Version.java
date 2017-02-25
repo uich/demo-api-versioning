@@ -65,4 +65,8 @@ public class Version implements Comparable<Version> {
     return this.compareTo(Version.parse(version));
   }
 
+  @Override
+  public String toString() {
+    return this.version;
+  }
 }

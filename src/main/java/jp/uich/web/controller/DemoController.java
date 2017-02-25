@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Value;
 
 @RestController
+//@ApiVersion(supported = "10.0")
 public class DemoController {
 
   @Builder

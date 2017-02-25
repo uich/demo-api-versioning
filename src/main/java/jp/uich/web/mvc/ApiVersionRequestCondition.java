@@ -65,4 +65,8 @@ public class ApiVersionRequestCondition implements RequestCondition<ApiVersionRe
       .orElse(null);
   }
 
+  @Override
+  public String toString() {
+    return "Version supported. [" + this.supported + "]";
+  }
 }
