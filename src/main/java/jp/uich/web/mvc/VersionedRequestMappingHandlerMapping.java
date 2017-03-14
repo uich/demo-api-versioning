@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.condition.RequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
@@ -34,25 +34,32 @@ public class VersionedRequestMappingHandlerMapping extends RequestMappingHandler
   }
 
   @Override
-  protected RequestMappingInfo getMappingForMethod(Method method, Class<?> handlerType) {
-    RequestMappingInfo info = super.getMappingForMethod(method, handlerType);
-
-    if (AnnotationUtils.findAnnotation(method, ApiVersion.class) != null) {
-      RequestCondition<?> methodCondition = this.getCustomMethodCondition(method);
-      info = this.createApiVersionInfo(methodCondition).combine(info);
+  protected RequestCondition<?> getCustomTypeCondition(Class<?> handlerType) {
+    if (handlerType.isAnnotationPresent(ApiVersion.class)) {
+      return this.createApiVersionCondition(AnnotationUtils.findAnnotation(handlerType, ApiVersion.class));
     }
 
-    return info;
+    return null;
   }
 
-  private RequestMappingInfo createApiVersionInfo(RequestCondition<?> customCondition) {
-    String pathPattern = "{version:\\d+\\.\\d+}";
+  @Override
+  protected RequestMappingInfo createRequestMappingInfo(RequestMapping requestMapping,
+    RequestCondition<?> customCondition) {
+    if (customCondition instanceof ApiVersionRequestCondition) {
+      return RequestMappingInfo.paths(Arrays.stream(requestMapping.path())
+        .map(path -> "/{version:\\d+\\.\\d+}/" + StringUtils.removeStart(path, "/"))
+        .toArray(String[]::new))
+        .methods(requestMapping.method())
+        .params(requestMapping.params())
+        .headers(requestMapping.headers())
+        .consumes(requestMapping.consumes())
+        .produces(requestMapping.produces())
+        .mappingName(requestMapping.name())
+        .customCondition(customCondition)
+        .build();
+    }
 
-    PatternsRequestCondition patternCondtion = new PatternsRequestCondition(new String[] { pathPattern },
-      this.getUrlPathHelper(), this.getPathMatcher(), this.useSuffixPatternMatch(), this.useTrailingSlashMatch(),
-      this.getFileExtensions());
-
-    return new RequestMappingInfo(patternCondtion, null, null, null, null, null, customCondition);
+    return super.createRequestMappingInfo(requestMapping, customCondition);
   }
 
   private ApiVersionRequestCondition createApiVersionCondition(@Nonnull ApiVersion apiVersion) {
