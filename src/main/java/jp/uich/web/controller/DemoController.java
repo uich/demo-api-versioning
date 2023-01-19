@@ -17,23 +17,23 @@ public class DemoController {
   @Builder
   @Value
   static class Item1 {
-    private Integer id;
-    private String name;
+    Integer id;
+    String name;
   }
 
   @Builder
   @Value
   static class Item2 {
-    private Long id;
-    private String name;
-    private Double price;
+    Long id;
+    String name;
+    Double price;
   }
 
   @Builder
   @Value
   static class User {
-    private Long id;
-    private String name;
+    Long id;
+    String name;
   }
 
   @GetMapping("/items/{id}")

@@ -35,15 +35,14 @@ public class Version implements Comparable<Version> {
 
   public static Version parse(@Nonnull String version) {
     Assert.isTrue(StringUtils.isNotBlank(version), "Version should not be blank.");
+    var split = SPLITTER.splitToList(version);
 
-    List<String> splited = SPLITTER.splitToList(version);
+    Assert.isTrue(split.stream().allMatch(StringUtils::isNumeric), "Version should be numeric.");
+    Assert.isTrue(split.size() > 0, "Version should have major version number.");
 
-    Assert.isTrue(splited.stream().allMatch(StringUtils::isNumeric), "Version should be numeric.");
-    Assert.isTrue(splited.size() > 0, "Version should have major version number.");
-
-    Integer major = Integer.valueOf(splited.get(0));
-    Integer minor = splited.size() > 1 ? Integer.valueOf(splited.get(1)) : null;
-    Integer revision = splited.size() > 2 ? Integer.valueOf(splited.get(2)) : null;
+    var major = Integer.valueOf(split.get(0));
+    var minor = split.size() > 1 ? Integer.valueOf(split.get(1)) : null;
+    var revision = split.size() > 2 ? Integer.valueOf(split.get(2)) : null;
 
     return new Version(major, minor, revision);
   }

@@ -9,7 +9,7 @@ import jp.uich.web.mvc.VersionedRequestMappingHandlerMapping;
 public class WebMvcConfig extends DelegatingWebMvcConfiguration {
 
   @Override
-  public VersionedRequestMappingHandlerMapping requestMappingHandlerMapping() {
+  protected VersionedRequestMappingHandlerMapping createRequestMappingHandlerMapping() {
     return new VersionedRequestMappingHandlerMapping();
   }
 
