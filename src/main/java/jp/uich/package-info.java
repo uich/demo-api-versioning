@@ -1,4 +1,4 @@
 @NonNullApi
-package jp.uich.web.mvc.config;
+package jp.uich;
 
 import org.springframework.lang.NonNullApi;
