@@ -50,7 +50,7 @@ public class ApiVersionRequestCondition implements RequestCondition<ApiVersionRe
 
   @Nullable
   private static Version getRequestApiVersion(HttpServletRequest request) {
-    return Optional.of(PATH_MATCHER.extractUriTemplateVariables(VERSIONED_PATH_PATTERN, request.getRequestURI()))
+    return Optional.of(PATH_MATCHER.extractUriTemplateVariables(VERSIONED_PATH_PATTERN, request.getServletPath()))
                    .map(map -> map.get("version"))
                    .map(version -> {
                      try {
